@@ -1,27 +1,10 @@
-const nodemailer = require('nodemailer');
-const dotenv = require('dotenv');
+const sgMail = require("@sendgrid/mail");
+const dotenv = require("dotenv");
 
 dotenv.config();
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,              // 🔥 IMPORTANT
-  secure: true,           // 🔥 true for 465
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS, // App Password only
-  },
-  connectionTimeout: 10000,
-});
-
-
-transporter.verify(function (error, success) {
-  if (error) {
-    console.error('Gmail Service connection failed:', error);
-  } else {
-    console.log('Service configured properly and ready to send emails.',success);
-  }
-});
+// 🔐 SendGrid API key
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 
 
@@ -50,14 +33,16 @@ const sendOtpToEmail = async (email, otp) => {
     </div>
   `;
 
-  await transporter.sendMail({
-  from: `NEXCHAT APP <${process.env.EMAIL_USER}>`,
-  to: email,
-  subject: 'Your NEXCHAT APP Code',
-  text: `Your NEXCHAT APP verification code is: ${otp}`,
+   await sgMail.send({
+    to: email,
+    from: {
+      email: process.env.SENDGRID_FROM_EMAIL,
+      name: "NEXCHAT APP",
+    },
+    subject: "Your NEXCHAT APP Code",
+    text: `Your NEXCHAT APP verification code is: ${otp}`,
     html,
-});
-
+  });
 };
 
 module.exports = sendOtpToEmail ;
