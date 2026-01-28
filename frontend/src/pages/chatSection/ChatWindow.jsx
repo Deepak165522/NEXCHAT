@@ -12,7 +12,7 @@ import { FaMapMarkerAlt, FaClock } from "react-icons/fa";
 import { FaCamera } from "react-icons/fa";
 import CameraModal from "./CameraModal";
 import VoiceRecorder from "./VoiceRecorder";
-import VideoCallManager from "../VideoCall/VideoCallManager";
+
 
 import useVideoCallStore from "../../store/videoCallStore";
 import { getSocket } from "../../services/chat.service";
@@ -26,8 +26,7 @@ import { useNavigate } from "react-router-dom";
 import { useForwardStore } from "../../store/useForwardStore";
 import PinnedBar from "./PinnedBar";
 import { RxCross2 } from "react-icons/rx";
-import AudioCallManager from "../AudioCall/AudioCallManager";
-import AudioCallModal from "../AudioCall/AudioCallModal";
+
 
 
 const isValidateDate = (date) => {
@@ -819,7 +818,8 @@ const handleSendAudioMessage = async () => {
   return (
 <>
 
-  <div className="flex w-full flex-1 flex-col h-screen">
+ <div className="flex w-full flex-1 flex-col h-screen overflow-hidden">
+
    
    {/* ================= CHAT HEADER ================= */}
 <div
@@ -1657,8 +1657,9 @@ const handleSendAudioMessage = async () => {
 <div
   className={`
     fixed bottom-0 left-0 right-0 z-40
-    px-2 py-2
-    flex items-center gap-2
+    px-0.5 sm:px-2 md:px-3
+    py-1 sm:py-2
+    flex items-center gap-0.5 sm:gap-1
     border-t
     ${theme === "dark"
       ? "bg-[#202c33] border-white/10"
@@ -1669,46 +1670,53 @@ const handleSendAudioMessage = async () => {
   {/* 😀 EMOJI */}
   <button
     onClick={() => setShowEmojiPicker(p => !p)}
-    className="p-2 flex-shrink-0 mr-[-14px]"
+    className="p-1.5 sm:p-2 flex-shrink-0"
   >
     <FaSmile
-      className={`h-6 w-6 ${
-        theme === "dark" ? "text-gray-300" : "text-gray-600"
-      }`}
+      className={`
+        h-4 w-4
+        sm:h-5 sm:w-5
+        ${theme === "dark" ? "text-gray-300" : "text-gray-600"}
+      `}
     />
   </button>
 
   {/* 📎 ATTACH */}
   <button
     onClick={() => setShowFileMenu(p => !p)}
-    className="p-2 flex-shrink-0 mr-[-14px]"
+    className="p-1.5 sm:p-2 flex-shrink-0"
   >
     <FaPaperclip
-      className={`h-6 w-6 ${
-        theme === "dark" ? "text-gray-400" : "text-gray-500"
-      }`}
+      className={`
+        h-4 w-4
+        sm:h-5 sm:w-5
+        ${theme === "dark" ? "text-gray-400" : "text-gray-500"}
+      `}
     />
   </button>
 
   {/* 📷 CAMERA */}
   <button
     onClick={() => setShowCamera(true)}
-    className="p-2 flex-shrink-0 mr-[-14px]"
+    className="p-1.5 sm:p-2 flex-shrink-0"
   >
     <FaCamera
-      className={`h-6 w-6 mr-[-12px]${
-        theme === "dark" ? "text-gray-300" : "text-gray-600"
-      }`}
+      className={`
+        h-4 w-4
+        sm:h-5 sm:w-5
+        ${theme === "dark" ? "text-gray-300" : "text-gray-600"}
+      `}
     />
   </button>
 
-  {/* 📝 INPUT + MIC (WRAPPED) */}
+  {/* 📝 INPUT + MIC */}
   <div
     className={`
       flex items-center flex-1
-      px-4 py-2
+      px-2 sm:px-3 md:px-4
+      py-1.5 sm:py-2
+      
       rounded-full
-      mr-[-14px]
       ${theme === "dark"
         ? "bg-[#2a3942]"
         : "bg-[#f0f2f5]"}
@@ -1725,25 +1733,28 @@ const handleSendAudioMessage = async () => {
       }}
       placeholder="Type a message"
       className={`
-        flex-1 bg-transparent outline-none text-sm
+        flex-1 bg-transparent outline-none
+        text-xs sm:text-sm md:text-base
         ${theme === "dark" ? "text-white" : "text-black"}
       `}
     />
 
-    {/* 🎤 MIC — always here */}
-    <VoiceRecorder onSendAudio={handleSendAudio} />
+    {/* 🎤 MIC */}
+    <div className="ml-1 sm:ml-2 flex-shrink-0">
+      <VoiceRecorder onSendAudio={handleSendAudio} />
+    </div>
   </div>
 
-  {/* ➤ SEND — extreme right */}
-  
-    <button
-      onClick={handleSendMessage}
-      className="p-2 flex-shrink-0 mr-[-14px]"
-    >
-      <FaPaperPlane className="h-5 w-5 text-green-500" />
-    </button>
-  
+  {/* ➤ SEND */}
+  <button
+    onClick={handleSendMessage}
+    className="p-1.5 sm:p-2 flex-shrink-0"
+  >
+    <FaPaperPlane className="h-4 w-4 sm:h-5 sm:w-5 text-green-500" />
+  </button>
 </div>
+
+
 
 
 

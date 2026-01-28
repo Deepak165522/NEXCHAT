@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 const Setting = () => {
   const [isThemeDialogOpen, setIsDialogOpen] = useState(false);
 
-  const { theme } = useThemeStore();
+  const { theme, setTheme } = useThemeStore();
   const { user, clearUser } = useUserStore();
 
   const toggleThemeDialog = () => {
@@ -121,7 +121,7 @@ const Setting = () => {
                   </Link>
                 ))}
 
-                <button
+               <button
   onClick={toggleThemeDialog}
   className={`w-full flex items-center gap-3 p-2 rounded ${
     theme === "dark"
@@ -143,7 +143,65 @@ const Setting = () => {
   </div>
 </button>
 
+
              </div>
+
+
+             {isThemeDialogOpen && (
+  <div
+    className="
+      fixed inset-0 z-50
+      flex items-center justify-center
+      bg-black/40
+    "
+    onClick={toggleThemeDialog}
+  >
+    <div
+      className={`w-72 rounded-xl p-4 shadow-lg
+      ${theme === "dark" ? "bg-[#202c33]" : "bg-white"}`}
+      onClick={(e) => e.stopPropagation()}
+    >
+      <h3 className="text-sm font-semibold mb-3">Choose theme</h3>
+
+      {/* LIGHT OPTION */}
+      <button
+        onClick={() => {
+          setTheme("light");
+          toggleThemeDialog();
+        }}
+        className={`w-full flex items-center gap-3 p-2 rounded-lg
+        ${
+          theme === "light"
+            ? "bg-[#e7f3ff] text-black"
+            : "hover:bg-gray-100 dark:hover:bg-[#2a3942]"
+        }`}
+      >
+        <FaSun />
+        <span>Light</span>
+        {theme === "light" && <span className="ml-auto">✓</span>}
+      </button>
+
+      {/* DARK OPTION */}
+      <button
+        onClick={() => {
+          setTheme("dark");
+          toggleThemeDialog();
+        }}
+        className={`w-full flex items-center gap-3 p-2 rounded-lg mt-1
+        ${
+          theme === "dark"
+            ? "bg-[#2a3942] text-white"
+            : "hover:bg-gray-100 dark:hover:bg-[#2a3942]"
+        }`}
+      >
+        <FaMoon />
+        <span>Dark</span>
+        {theme === "dark" && <span className="ml-auto">✓</span>}
+      </button>
+    </div>
+  </div>
+)}
+
 <button
   onClick={handleLogout}
   className={`w-full flex items-center gap-3 p-2 rounded mt-10 md:mt-36 ${

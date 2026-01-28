@@ -196,11 +196,11 @@ const handleDeleteStatus = () => {
     onDelete(currentStatus.id);
   }
 
-  if (contact.statuses.length === 1) {
-    onClose();
-  } else {
-    onPrev();
-  }
+  // if (contact.statuses.length === 1) {
+  //   onClose();
+  // } else {
+  //   onPrev();
+  // }
 };
 
 if (!currentStatus) return null;

@@ -42,6 +42,7 @@ const pendingOpenRef = useRef(null);
 const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 const emojiRef = useRef(null);
 
+const isDeletedRef = useRef(false);
 
 
 
@@ -106,6 +107,7 @@ useEffect(() => {
 
 useEffect(() => {
   const handler = (e) => {
+    if (isDeletedRef.current) return; 
      if (previewContact) return; 
     console.log("🔥 OPEN STATUS EVENT", e.detail);
 
@@ -142,9 +144,14 @@ useEffect(() => {
 
 
 
+useEffect(() => {
+  isDeletedRef.current = false;
+}, []);
 
 
 useEffect(() => {
+
+  if (isDeletedRef.current) return;
   if (
     !location.state?.fromChat ||
     !location.state?.statusId ||
@@ -210,13 +217,19 @@ useEffect(() => {
           (c) => String(c.id) === String(previewContact.id)
         );
 
-  if (!updated) return;
+  // 🔥 YE LINE GAME CHANGER HAI
+  if (!updated || updated.statuses.length === 0) {
+    setPreviewContact(null);
+    setCurrentStatusIndex(0);
+    return;
+  }
 
-  setPreviewContact(prev => ({
+  setPreviewContact({
     ...updated,
     statuses: [...updated.statuses],
-  }));
+  });
 }, [statuses]);
+
 
 
 
@@ -323,13 +336,25 @@ const handleViewStatus = async (statusId) => {
 
 const handleDeleteStatus = async (statusId) => {
   try {
+
+    isDeletedRef.current = true;   // 🔥 MARK AS DELETED
     await deleteStatus(statusId);
+
+    // 🔥 FORCE CLEAN UI STATE
+    setPreviewContact(null);
+    setCurrentStatusIndex(0);
+    pendingOpenRef.current = null;
+
+    // 🔥 BACK + REFRESH SAFE
+    navigate("/status", { replace: true });
+
     setShowOption(false);
-    handlePreviewClose();
+
   } catch (error) {
-    console.error("Error to view status", error);
+    console.error("Error deleting status", error);
   }
 };
+
 
 
 
@@ -395,6 +420,7 @@ const handleStatusPreview = (contact, statusIndex = 0) => {
 
 useEffect(() => {
   if (!previewContact) return;
+   if (isDeletedRef.current) return;
 
   const status = previewContact.statuses[currentStatusIndex];
   if (!status) return;
@@ -734,18 +760,31 @@ useEffect(() => {
 
   {/* EMOJI PICKER */}
   {showEmojiPicker && (
-    <div
-      ref={emojiRef}
-      className="absolute bottom-14 right-0 z-50"
-    >
-      <EmojiPicker
-        theme={theme === "dark" ? "dark" : "light"}
-        onEmojiClick={(emojiData) => {
-          setNewStatus((prev) => prev + emojiData.emoji);
-        }}
-      />
-    </div>
-  )}
+  <div
+    ref={emojiRef}
+    className="
+      fixed z-50
+      top-1/2 left-1/2
+      -translate-x-1/2 -translate-y-1/2
+      w-[90vw] max-w-[360px]
+      h-[360px] max-h-[50vh]
+      overflow-hidden
+      rounded-2xl
+      shadow-xl
+      bg-white dark:bg-[#202c33]
+    "
+  >
+    <EmojiPicker
+      width="100%"
+      height="100%"
+      theme={theme === "dark" ? "dark" : "light"}
+      onEmojiClick={(emojiData) => {
+        setNewStatus((prev) => prev + emojiData.emoji);
+      }}
+    />
+  </div>
+)}
+
 
 </div>
 
