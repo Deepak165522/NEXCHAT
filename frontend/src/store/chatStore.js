@@ -341,15 +341,15 @@ const replyToStatus = rawReplyToStatus
       sender: { _id: senderId },
       receiver: isSelfChat ? { _id: senderId } : { _id: receiverId },
       conversation: isSelfChat ? "self" : conversationId,
-      content,
-      contentType,
+      // content,
+      // contentType,
 
       poll: poll ? JSON.parse(poll) : null,
       imageOrVideoUrl:
         media && typeof media !== "string"
           ? URL.createObjectURL(media)
           : null,
-      content:content,
+      content,
     contentType: poll
     ? "poll"
     : media
@@ -590,7 +590,8 @@ if (
       )
       .map((msg) => msg._id).filter(Boolean);
 
-    if (!unreadIds.length === 0) return;
+   if (unreadIds.length === 0) return;
+
 
     try {
      const {data}= await axiosInstance.put("/chats/messages/read", {

@@ -1,6 +1,6 @@
 import axiosInstance from "./url.service";
 
-import axios from "axios";
+
 
 // 📌 Send OTP
 export const sendOtp = async (phoneNumber,phoneSuffix,email) => {
