@@ -15,10 +15,25 @@ dotenv.config();
 const PORT = process.env.PORT;
 const app = express();
 
-const corsOption = {
-  origin: process.env.FRONTEND_URL,
-  credentials: true,
-};
+// const corsOption = {
+//   origin: process.env.FRONTEND_URL,
+//   credentials: true,
+// };
+
+
+// ✅ FIXED CORS
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (origin.endsWith(".vercel.app")) {
+        return callback(null, true);
+      }
+      return callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
+  })
+);
 
 app.use(cors(corsOption));
 app.use(express.json());
