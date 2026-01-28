@@ -15,7 +15,7 @@ const ChatList = ({ contacts }) => {
   const setSelectedContact = useLayoutStore((state) => state.setSelectedContact);
   const { theme } = useThemeStore();
   const { user } = useUserStore();
-  const { conversations } = useChatStore();
+  // const { conversations } = useChatStore();
 
 
   const [searchTerms, setSearchTerms] = useState("");
