@@ -1,13 +1,13 @@
 import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-
 import "./App.css";
 import Login from "./pages/user-login/Login";
 import HomePage from "./components/HomePage";
 import UserDetails from "./components/UserDetails";
 import Status from "./pages/StatusSection/Status";
 import Setting from "./pages/SettingSection/Setting";
+import CallsPage from "./pages/Calls/CallsPage";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -16,9 +16,6 @@ import { ProtectedRoute, PublicRoute } from "./Protected";
 import useUserStore from "./store/useUserStore";
 import { initializeSocket } from "./services/chat.service";
 import { useChatStore } from "./store/chatStore";
-import CallHistoryPage from "./pages/callhistory/CallHistoryPage";
-import CallsPage from "./pages/Calls/CallsPage";
-
 
 function App() {
   const { user } = useUserStore();
@@ -26,15 +23,15 @@ function App() {
 
   useEffect(() => {
     if (user?._id) {
-      initializeSocket(); // 🔥 ONLY HERE
+      initializeSocket();   // 🔥 socket only once
       setCurrentUser(user);
       initSocketListeners();
     }
 
     return () => {
-      cleanup(); // ❌ socket disconnect mat karo
+      cleanup();
     };
-  }, [user]);
+  }, [user, setCurrentUser, initSocketListeners, cleanup]); // ✅ FIX
 
   return (
     <>
@@ -50,10 +47,7 @@ function App() {
             <Route path="/user-profile" element={<UserDetails />} />
             <Route path="/status" element={<Status />} />
             <Route path="/setting" element={<Setting />} />
-            {/* <Route path="/calls" element={<CallHistoryPage />} /> */}
             <Route path="/calls" element={<CallsPage />} />
-
-
           </Route>
         </Routes>
       </Router>

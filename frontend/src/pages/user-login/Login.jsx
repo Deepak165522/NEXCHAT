@@ -84,9 +84,10 @@ const avatars = [
 const Login = () => {
   const { step, setStep, setUserPhoneData, userPhoneData, resetLoginState } = useLoginStore();
 
-  useEffect(() => {
-    resetLoginState(); // 🔥 force reset to STEP 1
-  }, []);
+ useEffect(() => {
+  resetLoginState();
+}, [resetLoginState]);
+
 
   const [phoneNumber, setPhoneNumber] = useState("");
   const [selectedCountry, setSelectedCountry] = useState(countries[0]);

@@ -6,7 +6,7 @@ import { FaPlus, FaSearch } from "react-icons/fa";
 import { motion } from "framer-motion";
 import formatTimestamp from "../../utils/formatTime";
 
-import { useChatStore } from "../../store/chatStore";
+// import { useChatStore } from "../../store/chatStore";
 
 
 

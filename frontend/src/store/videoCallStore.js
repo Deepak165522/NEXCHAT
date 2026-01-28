@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 
-let incomingVideoAudio = null;
+
 
 
 const useVideoCallStore = create(

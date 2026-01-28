@@ -292,8 +292,8 @@ clearChat: async (conversationId, keepStarred) => {
     const media = formData.get("media");
     const content = formData.get("content");
     const messageStatus = formData.get("messageStatus");
-    const socket =getSocket();
-    const contentType=formData.get("contentType");
+    
+   
     const poll=formData.get("poll");
     const replyToMessage = get().replyToMessage;
 const rawReplyToStatus = formData.get("replyToStatus");
@@ -594,7 +594,7 @@ if (
 
 
     try {
-     const {data}= await axiosInstance.put("/chats/messages/read", {
+      await axiosInstance.put("/chats/messages/read", {
         messageIds: unreadIds,
       });
 
