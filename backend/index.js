@@ -21,19 +21,31 @@ const app = express();
 // };
 
 
-// ✅ FIXED CORS
+const allowedOrigins = [
+  "https://nexchat-three.vercel.app", // production domain (agar ho)
+  "https://nexchat.vercel.app",       // optional
+];
+
 app.use(
   cors({
     origin: function (origin, callback) {
+      // allow server-to-server & Postman
       if (!origin) return callback(null, true);
-      if (origin.endsWith(".vercel.app")) {
+
+      // allow all vercel preview urls
+      if (
+        origin.endsWith(".vercel.app") ||
+        allowedOrigins.includes(origin)
+      ) {
         return callback(null, true);
       }
+
       return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
   })
 );
+
 
 app.use(cors(corsOption));
 app.use(express.json());
