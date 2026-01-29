@@ -21,19 +21,28 @@ useEffect(() => {
 
 
 useEffect(() => {
-    const audio = ringtoneRef.current;
-    if (!audio) return;
+  const audio = ringtoneRef.current;
+  if (!audio) return;
 
-    const { callStatus } = useAudioCallStore.getState();
+  const { callStatus, incomingCall } =
+    useAudioCallStore.getState();
 
-    if (callStatus === "ringing") {
-      audio.currentTime = 0;
-      audio.play().catch(() => {});
-    } else {
-      audio.pause();
-      audio.currentTime = 0;
-    }
-  }, [useAudioCallStore((s) => s.callStatus)]);
+     console.log(
+  "RING CHECK:",
+  callStatus,
+  incomingCall ? "RECEIVER" : "CALLER"
+);
+
+  // 🔔 RINGTONE SIRF RECEIVER KE LIYE
+  if (callStatus === "ringing" && incomingCall) {
+    audio.currentTime = 0;
+    audio.play().catch(() => {});
+  } else {
+    audio.pause();
+    audio.currentTime = 0;
+  }
+}, [useAudioCallStore((s) => s.callStatus)]);
+
 
 
 
@@ -53,6 +62,9 @@ useEffect(() => {
   
       
     };
+
+
+   
 
     /* 🔴 CLOSE CALL — BOTH SIDES */
     const onCallEnded = ({ reason }) => {
