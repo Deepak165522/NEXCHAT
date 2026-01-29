@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -13,6 +13,7 @@ import useUserStore from "../store/useUserStore";
 import ChatWindow from "../pages/chatSection/ChatWindow";
 import ForwardModal from "./Forward/ForwardModal";
 import FloatingCallBar from "../pages/AudioCall/FloatingCallBar";
+import { useChatStore } from "../store/chatStore";
 
 import useAudioCallStore from "../store/audioCallStore";
 
@@ -34,7 +35,20 @@ const socket = getSocket(); // 🔥 ADD THIS LINE
   const { theme } = useThemeStore();
   const { user } = useUserStore();
 
+  const notificationAudioRef = useRef(null);
+const prevUnreadRef = useRef(0);
 
+const { conversations } = useChatStore();
+
+
+
+useEffect(() => {
+  if (theme === "dark") {
+    document.documentElement.classList.add("dark");
+  } else {
+    document.documentElement.classList.remove("dark");
+  }
+}, [theme]);
 
 
   useEffect(() => {
@@ -67,6 +81,79 @@ const socket = getSocket(); // 🔥 ADD THIS LINE
   };
 
   document.addEventListener("click", unlockAudio);
+}, []);
+
+
+
+
+
+useEffect(() => {
+  if (!user?._id) return;
+
+  const conversationArray = Array.isArray(conversations?.data)
+    ? conversations.data
+    : [];
+
+  let totalUnread = 0;
+
+  conversationArray.forEach((conv, i) => {
+    if (
+      conv?.unreadCount > 0 &&
+      conv?.lastMessage?.receiver?._id === user._id
+    ) {
+      totalUnread += conv.unreadCount;
+    }
+  });
+
+  console.log(
+    "🔔 NOTIFICATION CHECK:",
+    totalUnread,
+    "prev:",
+    prevUnreadRef.current
+  );
+
+
+
+
+  if (
+    totalUnread > prevUnreadRef.current &&
+    notificationAudioRef.current
+  ) {
+    notificationAudioRef.current.currentTime = 0;
+    notificationAudioRef.current.play().catch(() => {});
+  }
+
+  prevUnreadRef.current = totalUnread;
+}, [conversations, user?._id]);
+
+
+
+
+
+
+useEffect(() => {
+  const unlockNotificationAudio = () => {
+    const audio = notificationAudioRef.current;
+    if (!audio) return;
+
+    audio.volume = 0;
+    audio.play()
+      .then(() => {
+        audio.pause();
+        audio.currentTime = 0;
+        audio.volume = 1;
+        console.log("🔓 Notification audio unlocked");
+      })
+      .catch(() => {});
+
+    document.removeEventListener("click", unlockNotificationAudio);
+  };
+
+  document.addEventListener("click", unlockNotificationAudio);
+
+  return () => {
+    document.removeEventListener("click", unlockNotificationAudio);
+  };
 }, []);
 
 
@@ -124,6 +211,13 @@ const socket = getSocket(); // 🔥 ADD THIS LINE
     <ForwardModal />
 <VideoCallManager socket={socket} />
     
+<audio
+  ref={notificationAudioRef}
+  src="/notification.wav"
+  preload="auto"
+/>
+
+
     
     </>
   );
